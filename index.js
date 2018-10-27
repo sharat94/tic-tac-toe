@@ -5,23 +5,25 @@
  * 0 -> empty box
  * 1 -> box with X
  * 2 -> box with O
- * 
+ *
  * Below are the tasks which needs to be completed
  * Imagine you are playing with Computer so every alternate move should be by Computer
  * X -> player
  * O -> Computer
- * 
+ *
  * Winner has to be decided and has to be flashed
- * 
+ *
  * Extra points will be given for the Creativity
- * 
+ *
  * Use of Google is not encouraged
- * 
+ *
  */
 const grid = [];
 const GRID_LENGTH = 3;
 let turn = 'X';
 
+const allEqualToX = arr => arr.every( v => v === 1 )
+const allEqualToO = arr => arr.every( v => v === 2 )
 function initializeGrid() {
     for (let colIdx = 0;colIdx < GRID_LENGTH; colIdx++) {
         const tempArray = [];
@@ -34,7 +36,7 @@ function initializeGrid() {
 
 function getRowBoxes(colIdx) {
     let rowDivs = '';
-    
+
     for(let rowIdx=0; rowIdx < GRID_LENGTH ; rowIdx++ ) {
         let additionalClass = 'darkBackground';
         let content = '';
@@ -77,9 +79,86 @@ function onBoxClick() {
     let newValue = 1;
     grid[colIdx][rowIdx] = newValue;
     renderMainGrid();
+    playAsComputer();
+    checkIfGameIsOver();
     addClickHandlers();
 }
 
+function checkIfGameIsOver() {
+  checkRowWin();
+  checkColumnWin();
+  checkDiagonalWin();
+  checkCrossDiagonalWin();
+}
+function checkRowWin() {
+  var boxes = document.getElementsByClassName("box");
+  for (var rowId = 0; rowId < GRID_LENGTH; rowId++) {
+    var values = [];
+    for (var columnId = 0; columnId < GRID_LENGTH; columnId ++){
+      values.push(grid[rowId][columnId]);
+    }
+    var Xstatus = allEqualToX(values);
+    var YStatus = allEqualToO(values);
+    if (Xstatus || YStatus){
+        window.alert('rows have won');
+        setTimeout(function(){ location.reload(); }, 1000);
+    }
+  }
+}
+function checkColumnWin() {
+  var boxes = document.getElementsByClassName("box");
+  for (var columnId = 0; columnId < GRID_LENGTH; columnId ++) {
+    var values = [];
+    for (var rowId = 0; rowId < GRID_LENGTH; rowId++){
+      values.push(grid[rowId][columnId]);
+    }
+    var Xstatus = allEqualToX(values);
+    var YStatus = allEqualToO(values);
+    if (Xstatus || YStatus){
+        window.alert('columns have won');
+        setTimeout(function(){ location.reload(); }, 1000);
+    }
+  }
+}
+function checkDiagonalWin() {
+  var boxes = document.getElementsByClassName("box");
+  for (var id = 0; id < GRID_LENGTH; id ++) {
+    var values = [];
+    values.push(grid[id][id]);
+  }
+    var Xstatus = allEqualToX(values);
+    var YStatus = allEqualToO(values);
+    if (Xstatus || YStatus){
+        window.alert('diagonals have won');
+        setTimeout(function(){ location.reload(); }, 1000);
+    }
+}
+function checkCrossDiagonalWin() {
+  var boxes = document.getElementsByClassName("box");
+  for (var i = 0, j= (GRID_LENGTH - 1); i < GRID_LENGTH; i ++, j--) {
+    var values = [];
+    values.push(grid[i][j]);
+  }
+    var Xstatus = allEqualToX(values);
+    var YStatus = allEqualToO(values);
+    if (Xstatus || YStatus){
+        window.alert('diagonals have won');
+        setTimeout(function(){ location.reload(); }, 1000);
+    }
+}
+function playAsComputer() {
+    var boxes = document.getElementsByClassName("box");
+    for (var id = 0; id < boxes.length; id++) {
+        if (boxes[id].children.length == 0){
+          var rowId = boxes[id].getAttribute("rowIdx");
+          var colId = boxes[id].getAttribute("colIdx");
+          let newValue = 2;
+          grid[colId][rowId] = newValue;
+          renderMainGrid();
+          return;
+        }
+    }
+}
 function addClickHandlers() {
     var boxes = document.getElementsByClassName("box");
     for (var idx = 0; idx < boxes.length; idx++) {
