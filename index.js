@@ -87,8 +87,8 @@ function onBoxClick() {
 function checkIfGameIsOver() {
   checkRowWin();
   checkColumnWin();
-  checkDiagonalWin();
-  checkCrossDiagonalWin();
+//   checkDiagonalWin();
+//   checkCrossDiagonalWin();
 }
 function checkRowWin() {
   var boxes = document.getElementsByClassName("box");
@@ -147,6 +147,61 @@ function checkCrossDiagonalWin() {
     }
 }
 function playAsComputer() {
+    renderMainGrid();
+    counterWin();
+    renderMainGrid();
+}
+function counterWin() {
+    var rowAData = {};
+    var columnData = {};
+    let diagonalCount = 0;
+    // Note: diagonal and cross diagonal logic is yet to be implemented
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        for (var j = 0; j < GRID_LENGTH; j++){
+            if (grid[i][j] == 1){
+                if (rowAData[i] == undefined){
+                    rowAData[i] = 0;
+                }
+                rowAData[i] += 1;
+            }
+        }
+    }
+    for (var j = 0; j < GRID_LENGTH; j++){
+        for (var i = 0; i < GRID_LENGTH; i ++){
+            if (grid[j][i] == 1){
+                if (columnData[i] == undefined){
+                    columnData[i] = 0;
+                }
+                columnData[i] += 1;
+            }
+        }
+    }
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (grid[i][i] == 1){
+            diagonalCount += 1;
+        }
+    }
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (rowAData[i] > 1){
+            populateRow(i);
+            return;
+        }
+    }
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (columnData[i] > 1){
+            populateColumn(i);
+            return;
+        }
+    }
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (diagonalCount[i] > 1){
+            populateDiagonal();
+            return;
+        }
+    }
+        playRandom();
+}
+function playRandom() {
     var boxes = document.getElementsByClassName("box");
     for (var id = 0; id < boxes.length; id++) {
         if (boxes[id].children.length == 0){
@@ -154,8 +209,31 @@ function playAsComputer() {
           var colId = boxes[id].getAttribute("colIdx");
           let newValue = 2;
           grid[colId][rowId] = newValue;
-          renderMainGrid();
           return;
+        }
+    }
+}
+function populateRow(rowId) {
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (grid[rowId][i] == 0){
+            grid[rowId][i] = 2;
+            return;
+        }
+    }
+}
+function populateColumn(columnId) {
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (grid[i][columnId] == 0){
+            grid[i][columnId] = 2;
+            return;
+        }
+    }
+}
+function populateDiagonal(id) {
+    for (var i = 0; i < GRID_LENGTH; i ++){
+        if (grid[i][i] == 0){
+            grid[i][i] = 2;
+            return;
         }
     }
 }
